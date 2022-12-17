@@ -1,0 +1,4 @@
+kazoo==2.6.0
+colorlog==6.7.0
+Flask==2.0.1
+requests==2.25.1

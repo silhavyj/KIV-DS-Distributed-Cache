@@ -1,3 +1,5 @@
 /.vagrant/ 
 /client/python/__pycache__/
 /client/python/venv/
+/utils/python/__pycache__/
+/utils/python/venv/

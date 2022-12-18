@@ -31,11 +31,13 @@ class BinaryTree:
             while len(nodes) > 0:
                 curr_node = nodes.pop(0)
                 
+                for node in curr_node.nodes:
+                    if node.ip_addr == node_ip_addr:
+                        return curr_node
+                    nodes.append(node)
+                
                 if curr_node.has_free_child_spot():
                     curr_node.assign_child(TreeNode(node_ip_addr, parent_node=curr_node))
                     return curr_node
-                
-                for node in curr_node.nodes:
-                    nodes.append(node)
                     
         return None

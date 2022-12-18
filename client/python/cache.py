@@ -1,3 +1,5 @@
+from threading import Lock
+
 class Cache:
     
     def __init__(self):

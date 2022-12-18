@@ -14,24 +14,26 @@ if __name__ == '__main__':
         key = argv[3]
         value = argv[4]
         try:
-            response = requests.put(f'http://{ip_addr}:5000/data', json = {'key' : key, 'value' : value})
+            response = requests.put(f'http://{ip_addr}:5000/data?key={key}&value={value}')
             print(f'status_code: {response.status_code}')
-            print(f'data: {response.json()}')
+            print(f'data: {response.text}')
         except Exception as e:
             print(e)
     elif op == 'del':
         key = argv[3]
         try:
-            response = requests.delete(f'http://{ip_addr}:5000/data', json = {'key' : key})
+            response = requests.delete(f'http://{ip_addr}:5000/data?key={key}')
             print(f'status_code: {response.status_code}')
-            print(f'data: {response.json()}')
+            print(f'data: {response.text}')
         except Exception as e:
             print(e)
     elif op == 'get':
         key = argv[3]
         try:
-            response = requests.get(f'http://{ip_addr}:5000/data', json = {'key' : key})
+            response = requests.get(f'http://{ip_addr}:5000/data?key={key}')
             print(f'status_code: {response.status_code}')
-            print(f'data: {response.json()}')
+            print(f'data: {response.text}')
         except Exception as e:
             print(e)
+    else:
+        print('invalid operation entered')

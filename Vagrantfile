@@ -16,6 +16,7 @@ CLIENTS_COUNT = (2**TREE_DEPTH_LEVEL) - 1
 
 ZOONODE_IMAGE = "ds/task03/silhavyj/zoonode:0.1"
 CLIENT_IMAGE  = "ds/task03/silhavyj/client:0.1"
+UTILS_IMAGE   = "ds/task03/silhavyj/utils:0.1"
 
 CLIENTS = { 
     :nameprefix => "client-",
@@ -32,8 +33,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.trigger.before :up, type: :command do |trigger|
         trigger.name = "Build docker images"
         trigger.ruby do |env, machine|
+            puts "Building utils image:"
+            `docker build utils -t "#{UTILS_IMAGE}"`
+
             puts "Building node image:"
             `docker build client -t "#{CLIENT_IMAGE}"`
+
             puts "Building zoonode image:"
             `docker build zoonode -t "#{ZOONODE_IMAGE}"`
         end

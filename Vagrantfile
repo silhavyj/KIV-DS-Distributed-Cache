@@ -25,9 +25,11 @@ CLIENTS = {
     :image => CLIENT_IMAGE 
 }
 
-ROOT_NAME = "#{CLIENTS[:nameprefix]}0"
-ROOT_IP_ADDR = "#{CLIENTS[:subnet]}#{CLIENTS[:ip_offset]}"
-ZOONODE_IP_ADDR = "#{CLIENTS[:subnet]}#{CLIENTS[:ip_offset] - 1}"
+ROOT_NAME          = "#{CLIENTS[:nameprefix]}0"
+ROOT_IP_ADDR       = "#{CLIENTS[:subnet]}#{CLIENTS[:ip_offset]}"
+
+ZOONODE_IP_ADDR    = "#{CLIENTS[:subnet]}#{CLIENTS[:ip_offset] - 1}"
+UTILS_NODE_IP_ADDR = "#{CLIENTS[:subnet]}#{CLIENTS[:ip_offset] - 2}"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.trigger.before :up, type: :command do |trigger|
@@ -45,6 +47,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
 
     config.ssh.insert_key = false
+
+    config.vm.define "node-utils" do |utils|
+        utils.vm.network "private_network", ip: UTILS_NODE_IP_ADDR
+        utils.vm.hostname = "zoonode"
+        utils.vm.network "forwarded_port", guest: 80, host: 5000, host_ip: "0.0.0.0", auto_correct: true
+        utils.vm.provider "docker" do |d|
+          d.image = UTILS_IMAGE
+          d.name = "node-utils"
+          d.has_ssh = true
+        end
+        utils.vm.post_up_message = "Node 'zoonode' up and running. You can access the node with 'vagrant ssh zoonode'}"
+    end
 
     config.vm.define "zoonode" do |s|
         s.vm.network "private_network", ip: ZOONODE_IP_ADDR

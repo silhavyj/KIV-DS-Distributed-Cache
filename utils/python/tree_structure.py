@@ -1,20 +1,27 @@
 from kazoo.client import KazooClient
 
-zk = KazooClient(hosts="176.0.1.99")
+# Zookeeper IP address
+ZOO_SERVERS_IP_ADDR = '176.0.1.99'
 
+# Initialize a Zookeeper client
+zk = KazooClient(hosts=ZOO_SERVERS_IP_ADDR)
 zk.start()
 
-path_queue = ["/"]
-while len(path_queue) > 0:
-    curr_path = path_queue.pop()
-    print(f"Found node: {curr_path}")
-    # begin the search for parent node
+paths = ['/'] # Treated as a stack
+
+# Performs a DFS algorithm to recursively find
+# different nodes registered with the Zookeeper
+while len(paths) > 0:
+    # Pop the current path off the stack and print it out
+    curr_path = paths.pop()
+    print(f'path: {curr_path}')
+    
     data, stats = zk.get(curr_path)
     if stats.children_count > 0:
+        # Expand the current path (add its child nodes)
         children = zk.get_children(curr_path)
-        for addr in children:
-            # add new paths to queue for future search
-            path_queue.append(f"{curr_path}/{addr}")
+        for ip_addr in children:
+            paths.append(f"{curr_path}/{ip_addr}")
 
-# Close the session
+# Stop the Zookeeper client
 zk.stop()

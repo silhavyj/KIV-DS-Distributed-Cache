@@ -1,7 +1,7 @@
 import sys
 import requests
 
-
+# Print out HELP
 def print_help():
     print('GET:    python3 cache.py <ip_addr> get <key>')
     print('PUT:    python3 cache.py <ip_addr> put <key> <value>')
@@ -11,14 +11,15 @@ def print_help():
 if __name__ == '__main__':
     try:
         argv = sys.argv
-        ip_addr = argv[1]
-        op = argv[2].lower()
-        key = argv[3]
+        
+        ip_addr = argv[1]    # IP address
+        op = argv[2].lower() # operation type (get, put, delete)
+        key = argv[3]        # key
         
         if op == 'get':
             response = requests.get(f'http://{ip_addr}:5000/data?key={key}')
         elif op == 'put':
-            value = argv[4]
+            value = argv[4]  # value
             response = requests.put(f'http://{ip_addr}:5000/data?key={key}&value={value}')
         elif op == 'delete':
             response = requests.delete(f'http://{ip_addr}:5000/data?key={key}')

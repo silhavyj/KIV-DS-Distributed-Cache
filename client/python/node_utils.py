@@ -1,3 +1,4 @@
+import json
 import requests
 
 from logger import log
@@ -38,10 +39,12 @@ def propagate_updated_data(parent_node_ip_addr, key, value):
         log.error(f'Error when updating data in the parent node: {e}')
         
         
-#def propagate_deleted_data(parent_node_ip_addr, key):
-#    try:
-#        response = requests.delete(f'http://{parent_node_ip_addr}:5000/data', json={'key' : key})
-#        if response.status_code != 200:
-#            log.error('Failed to delete data in the parent node')
-#    except Exception as e:
-#        log.error(f'Error when deleting data in the parent node: {e}')
+def propagate_deleted_data(parent_node_ip_addr, key):
+    try:
+        url = f'http://{parent_node_ip_addr}:5000/data?key={key}'
+        log.debug(f'Sending an HTTP DELETE request to {url}')
+        response = requests.delete(url)
+        if response.status_code != 200:
+            log.error('Failed to delete data in the parent node')
+    except Exception as e:
+        log.error(f'Error when deleting data in the parent node: {e}')

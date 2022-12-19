@@ -1,10 +1,11 @@
+import os
 from kazoo.client import KazooClient
 
 # Zookeeper IP address
-ZOO_SERVERS_IP_ADDR = '176.0.1.99'
+zoo_servers_ip_addr = os.environ['ZOO_SERVERS']
 
 # Initialize a Zookeeper client
-zk = KazooClient(hosts=ZOO_SERVERS_IP_ADDR)
+zk = KazooClient(hosts=zoo_servers_ip_addr)
 zk.start()
 
 paths = ['/'] # Treated as a stack

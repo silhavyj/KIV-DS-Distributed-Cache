@@ -13,4 +13,8 @@ The goal of this assignment was to implement a distributed cache. The cache is m
 * `DELETE <ip> <key>` - Deletes the value that is stored with the given key.
     * Just like the `PUT` method, it propagates the update up the tree structure.
 
-Each node knows the IP address of the root node (it is passed into the container as an environment variable). Once a node starts up, it connects to the root node to retrieve the IP address of its corresponding parent node. After, that it registers with the Zookeeper.
+Each node knows the IP address of the root node (it is passed into the container as an environment variable). Once a node starts up, it connects to the root node to retrieve the IP address of its parent node. After, that it registers with the Zookeeper, where the entire structure is visualized. 
+
+## Utils
+
+There was an additional node added into the system, which contains a few utility scripts to test out the functionality of the system. The user can connect to it by executing the f

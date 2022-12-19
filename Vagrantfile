@@ -25,7 +25,7 @@ CLIENTS = {
     :image => CLIENT_IMAGE 
 }
 
-ROOT_NAME          = "#{CLIENTS[:nameprefix]}0"
+ROOT_NAME          = "#{CLIENTS[:nameprefix]}root"
 ROOT_IP_ADDR       = "#{CLIENTS[:subnet]}#{CLIENTS[:ip_offset]}"
 
 ZOONODE_IP_ADDR    = "#{CLIENTS[:subnet]}#{CLIENTS[:ip_offset] - 1}"

@@ -25,9 +25,9 @@ CLIENTS = {
     :image => CLIENT_IMAGE 
 }
 
-ROOT_NAME          = "#{CLIENTS[:nameprefix]}root"
-ROOT_IP_ADDR       = "#{CLIENTS[:subnet]}#{CLIENTS[:ip_offset]}"
-
+ROOT_NODE_IDX      = 3
+ROOT_NAME          = "#{CLIENTS[:nameprefix]}#{ROOT_NODE_IDX}"
+ROOT_IP_ADDR       = "#{CLIENTS[:subnet]}#{CLIENTS[:ip_offset] + ROOT_NODE_IDX}"
 ZOONODE_IP_ADDR    = "#{CLIENTS[:subnet]}#{CLIENTS[:ip_offset] - 1}"
 UTILS_NODE_IP_ADDR = "#{CLIENTS[:subnet]}#{CLIENTS[:ip_offset] - 2}"
 
@@ -89,24 +89,26 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         end
     end
 
-    (1..CLIENTS_COUNT - 1).each do |i|
-        node_ip_addr = "#{CLIENTS[:subnet]}#{CLIENTS[:ip_offset] + i}"
-        node_name = "#{CLIENTS[:nameprefix]}#{i}"
-        config.vm.define node_name do |s|
-            s.vm.network "private_network", ip: node_ip_addr
-            s.vm.network "forwarded_port", guest: 80, host: 5000, host_ip: "0.0.0.0", auto_correct: true
-            s.vm.hostname = "#{CLIENTS[:nameprefix]}#{i}"
-            s.vm.provider "docker" do |d|
-                d.image = CLIENTS[:image]
-                d.name = node_name
-                d.has_ssh = true
-                d.env = {
-                    "ROOT_NODE" => ROOT_IP_ADDR,
-                    "NODE_ADDRESS" => node_ip_addr,
-                    "ZOO_SERVERS" => ZOONODE_IP_ADDR
-                }
+    (0..CLIENTS_COUNT - 1).each do |i|
+        if i != ROOT_NODE_IDX
+            node_ip_addr = "#{CLIENTS[:subnet]}#{CLIENTS[:ip_offset] + i}"
+            node_name = "#{CLIENTS[:nameprefix]}#{i}"
+            config.vm.define node_name do |s|
+                s.vm.network "private_network", ip: node_ip_addr
+                s.vm.network "forwarded_port", guest: 80, host: 5000, host_ip: "0.0.0.0", auto_correct: true
+                s.vm.hostname = "#{CLIENTS[:nameprefix]}#{i}"
+                s.vm.provider "docker" do |d|
+                    d.image = CLIENTS[:image]
+                    d.name = node_name
+                    d.has_ssh = true
+                    d.env = {
+                        "ROOT_NODE" => ROOT_IP_ADDR,
+                        "NODE_ADDRESS" => node_ip_addr,
+                        "ZOO_SERVERS" => ZOONODE_IP_ADDR
+                    }
+                end
+                s.vm.post_up_message = "Node #{node_name} up and running. You can access the node with 'docker exec -it #{node_name} bash'}"
             end
-            s.vm.post_up_message = "Node #{node_name} up and running. You can access the node with 'docker exec -it #{node_name} bash'}"
         end
     end
 end

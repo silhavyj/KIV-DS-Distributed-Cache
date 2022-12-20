@@ -179,3 +179,12 @@ Another way to interact with the nodes is to use the interface that comes with e
 <img src="img/06.png">
 
 ## Cache coherence
+
+As you might have noticed, with each PUT or DELETE operation, the cache gets updated up towards the root node. Therefore, some nodes may still have old information in their local storage. The only node that has consistent data all the time is the root node itself. There are a few possible ways to deal with this issue, all of which have their proc & cons.
+
+### Approach #1
+
+Since the root node keeps the entire structure of the cache in memory, it could periodically broadcast broadcast the changes to all the nodes. Every record would be stored with a timestamp. If a node receives an update from the root node, it compares it to its local record and based on its timestamp, it would either update it or discard it. The issue with this approach is that it puts additional stress on the root node, which already represents a bottle neck of the system.
+
+### Approach #2
+

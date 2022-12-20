@@ -15,6 +15,35 @@ The goal of this assignment was to implement a distributed cache. The cache is m
 
 Each node knows the IP address of the root node (it is passed into the container as an environment variable). Once a node starts up, it connects to the root node to retrieve the IP address of its parent node. After, that it registers with the Zookeeper, where the entire structure is visualized. 
 
+## Settings
+
+The user can change the depth of the tree structure by changing the variable located in the Vagrantfile on line 14.
+
+```
+TREE_DEPTH_LEVEL = 3
+```
+
+Also, the user can change the index of the root node by changing line 28 in the same file.
+
+```
+ROOT_NODE_IDX = 0
+```
+However, this value must not exceed the total number of nodes - 1. For example, if the depth of the tree is 3, then the maximum allowed index for the root node to be is 6.
+
+## Starting up containers
+
+To start all containers that make up the application, all the user has to do is to type the following command in the root folder of the project structure.
+
+```
+vagrant up
+```
+
+To shut down the containers, the can use the following command.
+
+```
+vagrant destroy -f
+```
+
 ## Utils
 
 There was an additional node added into the system that contains a few utility scripts to test out different kinds of functionality. The user can connect to it by executing the following command
@@ -54,16 +83,16 @@ An output of the script may look something like this.
 ```
 [root@zoonode python]# python3 tree_structure.py
 path: /
-path: //176.0.1.100
-path: //176.0.1.100/176.0.1.102
-path: //176.0.1.100/176.0.1.102/176.0.1.106
-path: //176.0.1.100/176.0.1.102/176.0.1.105
-path: //176.0.1.100/176.0.1.101
-path: //176.0.1.100/176.0.1.101/176.0.1.103
-path: //176.0.1.100/176.0.1.101/176.0.1.104
-path: //zookeeper
-path: //zookeeper/quota
-path: //zookeeper/config
+path: /176.0.1.100
+path: /176.0.1.100/176.0.1.102
+path: /176.0.1.100/176.0.1.102/176.0.1.106
+path: /176.0.1.100/176.0.1.102/176.0.1.105
+path: /176.0.1.100/176.0.1.101
+path: /176.0.1.100/176.0.1.101/176.0.1.103
+path: /176.0.1.100/176.0.1.101/176.0.1.104
+path: /zookeeper
+path: /zookeeper/quota
+path: /zookeeper/config
 [root@zoonode python]# 
 ```
 

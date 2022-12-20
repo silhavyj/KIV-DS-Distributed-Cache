@@ -22,7 +22,10 @@ while len(paths) > 0:
         # Expand the current path (add its child nodes)
         children = zk.get_children(curr_path)
         for ip_addr in children:
-            paths.append(f"{curr_path}/{ip_addr}")
+            if curr_path == '/':
+                paths.append(f'/{ip_addr}')
+            else:
+                paths.append(f"{curr_path}/{ip_addr}")
 
 # Stop the Zookeeper client
 zk.stop()

@@ -2,12 +2,12 @@
 
 <img src="img/01.png">
 
-The goal of this assignment was to implement a distributed cache. The cache is made up of several nodes connected in a binary tree structure. The depth of the tree is defined prior to starting up the containers. Each of the nodes holds its own key-value storage. There are three operations that can be performed on any node.
+The goal of this assignment was to implement a distributed cache. The cache is made up of several nodes connected in a binary tree structure. The depth of the tree is defined prior to starting up the containers. Each node holds its own key-value storage. There are three operations that can be performed on any node.
 
 * `GET <ip> <key>` - Returns the value that is stored with the given key.
-    * If the node holds no such record, it recursively tries to retrieve the data from its parent, leaving the caller temporarily blocked.
+    * If the node finds no such record in its local storage, it recursively tries to retrieve the data from its parent, leaving the caller temporarily blocked.
     * The look-up does not go beyond the root node.
-    * If the matching record is found on the way up the tree structure, all nodes involved in the process get to update their local storage on the way down.
+    * If a matching record is found on the way up the tree structure, all nodes involved in the process get to update their local storage on the way down.
 * `PUT <ip> <key> <value>` - Stores the given key-value pair.
     * The node also sends the update toward the root node, so the nodes can update their local storage as well.
     * The caller does not get blocked.
@@ -24,12 +24,12 @@ The user can adjust the depth of the tree structure by changing the `TREE_DEPTH_
 TREE_DEPTH_LEVEL = 3
 ```
 
-Similarly, the user can change the index of the root node by changing line 28 in the same file.
+Similarly, they can change the index of the root node by changing line 28 in the same file.
 
 ```
 ROOT_NODE_IDX = 0
 ```
-However, this value must not exceed the total number of nodes - 1. For example, if the depth of the tree is 3, then the maximum allowed index for the root node to be is 6.
+It important to highlight that this value must not exceed the total number of nodes - 1. For example, if the depth of the tree is 3, then the maximum allowed index of the root node is 6.
 
 ## Starting up containers
 
@@ -77,7 +77,7 @@ This script verifies that the nodes are indeed connected in the desired tree str
 python3 tree_structure.py
 ```
 
-Behind the scenes, the script connects to the zoonode whose IP address is retrieved from the environment variables. Using a DFS algorithm, it asks the zoonode for all paths it knows of.
+Behind the scenes, the script connects to the zoonode whose IP address is retrieved from the environment variables, and using a DFS algorithm, it asks it for all paths it knows of.
 
 An output of the script may look something like this.
 
@@ -104,7 +104,7 @@ The user can also use Zoonavigator to view the structure of the cache. All they 
 ```
 docker run -d --network host -e HTTP_PORT=9000 --name zoonavigator --restart unless-stopped elkozmon/zoonavigator:latest
 ```
-Once the container has started, they can navigate to http://localhost:9000/` where they enter the IP address of the zoonode (176.0.1.99).
+Once the container has started, they can navigate to http://localhost:9000/ where they enter the IP address of the zoonode - 176.0.1.99.
 
 ### `cache_client.py`
 
@@ -132,7 +132,7 @@ The status code indicates that no such record was found in the cache, at least o
 python3 cache_client.py 176.0.1.106 put test "Howdy, how's it going?"
 ```
 
-The only received information saying that the date has been stored successfully. As mentioned previously, it propagates the update up the tree structure.
+If all went well, the user receives a message saying that the data has been stored successfully. As mentioned previously, it propagates the update up the tree structure.
 ```
 status_code: 200
 data: "The value was successfully stored in the cache"
@@ -140,7 +140,7 @@ data: "The value was successfully stored in the cache"
 
 <img src="img/03.png">
 
-If we now try to execute the previous `GET` command, we get the following answer as the data is now known to the root node.
+If we now try to execute the previous GET command, we get the following answer as the data is now known to the root node.
 
 ```
 python3 cache_client.py 176.0.1.103 get test
@@ -155,7 +155,7 @@ data: "Howdy, how's it going?"
 
 #### DELETE
 
-The delete operation works in the similar fashion as the put operation. Once the data is deleted from the local storage, the update is propagated up the tree structure.
+The DELETE operation works in the similar fashion as the PUT operation. Once the data is deleted from the local storage, the update is propagated up the tree structure.
 
 ```
 python3 cache_client.py 176.0.1.106 delete test
@@ -184,7 +184,7 @@ As you might have noticed, with each PUT or DELETE operation, the cache gets upd
 
 ### Approach #1
 
-Since the root node keeps the entire structure of the cache in memory, it could periodically broadcast broadcast the changes to all the nodes. Every record would be stored with a timestamp. If a node receives an update from the root node, it compares it to its local record and based on its timestamp, it would either update it or discard it. The issue with this approach is that it puts additional stress on the root node, which already represents a bottle neck of the system.
+Since the root node keeps the entire structure of the cache in memory, it could periodically broadcast changes to all the other nodes. Every record would be stored with a timestamp. If a node receives an update from the root node, it compares it to its local record and depending on its timestamp, it would either update it or discard it. The issue with this approach is that it puts additional stress on the root node, which already represents a bottle neck of the system.
 
 ### Approach #2
 

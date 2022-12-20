@@ -154,3 +154,20 @@ data: "Howdy, how's it going?"
 <img src="img/04.png">
 
 #### DELETE
+
+The delete operation works in the similar fashion as the put operation. Once the data is deleted from the local storage, the update is propagated up the tree structure.
+
+```
+python3 cache_client.py 176.0.1.106 delete test
+```
+
+The user is notified about the result through the following message.
+
+```
+status_code: 200
+data: "Data was successfully deleted from the cache"
+```
+
+However, if we send the get request to node `176.0.1.103` again, we still receive the data as the information about the data being deleted does not traverse down the other tree branch.
+
+<img src="img/05.png">

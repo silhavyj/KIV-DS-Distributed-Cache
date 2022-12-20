@@ -171,3 +171,11 @@ data: "Data was successfully deleted from the cache"
 However, if we send the get request to node `176.0.1.103` again, we still receive the data as the information about the data being deleted does not traverse down the other tree branch.
 
 <img src="img/05.png">
+
+## Open API
+
+Another way to interact with the nodes is to use the interface that comes with each node. For example, the web interface of node 1 can be accessed via http://176.0.1.101:5000/. It provides the same methods for data manipulation as the `cache_client.py` script.
+
+<img src="img/06.png">
+
+## Cache coherence

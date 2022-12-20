@@ -10,20 +10,21 @@ The goal of this assignment was to implement a distributed cache. The cache is m
     * If the matching record is found on the way up the tree structure, all nodes involved in the process get to update their local storage on the way down.
 * `PUT <ip> <key> <value>` - Stores the given key-value pair.
     * The node also sends the update toward the root node, so the nodes can update their local storage as well.
+    * The caller does not get blocked.
 * `DELETE <ip> <key>` - Deletes the value that is stored with the given key.
     * Just like the `PUT` method, it propagates the update up the tree structure.
 
-Each node knows the IP address of the root node (it is passed into the container as an environment variable). Once a node starts up, it connects to the root node to retrieve the IP address of its parent node. After, that it registers with the Zookeeper, where the entire structure is visualized. 
+Each node knows the IP address of the root node as it is passed into the container as an environment variable. Once a node starts up, it connects to the root node to retrieve the IP address of its parent node. Finally, it registers with the Zookeeper, where the entire structure is visualized. 
 
 ## Settings
 
-The user can change the depth of the tree structure by changing the variable located in the Vagrantfile on line 14.
+The user can adjust the depth of the tree structure by changing the `TREE_DEPTH_LEVEL` variable located in the Vagrantfile on line 14.
 
 ```
 TREE_DEPTH_LEVEL = 3
 ```
 
-Also, the user can change the index of the root node by changing line 28 in the same file.
+Similarly, the user can change the index of the root node by changing line 28 in the same file.
 
 ```
 ROOT_NODE_IDX = 0
@@ -38,7 +39,7 @@ To start all containers that make up the application, all the user has to do is 
 vagrant up
 ```
 
-To shut down the containers, the can use the following command.
+To shut down the containers, they can use the following command.
 
 ```
 vagrant destroy -f
@@ -46,7 +47,7 @@ vagrant destroy -f
 
 ## Utils
 
-There was an additional node added into the system that contains a few utility scripts to test out different kinds of functionality. The user can connect to it by executing the following command
+There was an additional node added into the system that contains a few utility scripts to test out different kinds of functionality of the system. The user can connect to it by executing the following command.
 
 ```
 docker exec -it node-utils /bin/bash
@@ -76,7 +77,7 @@ This script verifies that the nodes are indeed connected in the desired tree str
 python3 tree_structure.py
 ```
 
-Behind the scenes, the script connects to the zookeeper node whose IP address is retrieved from the environment variables. Using a DFS algorithm, it asks the zoonode for all paths it holds.
+Behind the scenes, the script connects to the zoonode whose IP address is retrieved from the environment variables. Using a DFS algorithm, it asks the zoonode for all paths it knows of.
 
 An output of the script may look something like this.
 

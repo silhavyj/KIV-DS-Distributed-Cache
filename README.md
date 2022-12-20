@@ -184,7 +184,4 @@ As you might have noticed, with each PUT or DELETE operation, the cache gets upd
 
 ### Approach #1
 
-Since the root node keeps the entire structure of the cache in memory, it could periodically broadcast changes to all the other nodes. Every record would be stored with a timestamp. If a node receives an update from the root node, it compares it to its local record and depending on its timestamp, it would either update it or discard it. The issue with this approach is that it puts additional stress on the root node, which already represents a bottle neck of the system.
-
-### Approach #2
-
+Since the root node keeps the entire structure of the cache in memory, it could periodically broadcast changes to all the other nodes. Every record would be stored with a timestamp. If a node receives an update from the root node, it compares it to its local record and depending on its timestamp, it would either update it or discard it. The issue with this approach is that it puts additional stress on the root node, which already represents a bottle neck of the system. The mitigate the overhead embedded in the periodical broadcast, the root node could only notify those nodes who are known to have old data. However, this would require the root node to keep track of what data each and every node has in its local storage which would significantly increase the space complexity.

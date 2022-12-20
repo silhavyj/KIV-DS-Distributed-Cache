@@ -107,3 +107,50 @@ docker run -d --network host -e HTTP_PORT=9000 --name zoonavigator --restart unl
 Once the container has started, they can navigate to http://localhost:9000/` where they enter the IP address of the zoonode (176.0.1.99).
 
 ### `cache_client.py`
+
+The cache client allows the user to perform different data-related operations on individual nodes.
+
+#### GET
+
+```
+python3 cache_client.py 176.0.1.103 get test
+```
+
+The output of this command looks as follows.
+
+```
+status_code: 204
+data: 
+```
+The status code indicates that no such record was found in the cache, at least on the way up to the root node.
+
+<img src="img/02.png">
+
+#### PUT
+
+```
+python3 cache_client.py 176.0.1.106 put test "Howdy, how's it going?"
+```
+
+The only received information saying that the date has been stored successfully. As mentioned previously, it propagates the update up the tree structure.
+```
+status_code: 200
+data: "The value was successfully stored in the cache"
+```
+
+<img src="img/03.png">
+
+If we now try to execute the previous `GET` command, we get the following answer as the data is now known to the root node.
+
+```
+python3 cache_client.py 176.0.1.103 get test
+```
+
+```
+status_code: 200
+data: "Howdy, how's it going?"
+```
+
+<img src="img/04.png">
+
+#### DELETE

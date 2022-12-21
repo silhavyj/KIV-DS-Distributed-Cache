@@ -140,7 +140,7 @@ data: "The value was successfully stored in the cache"
 
 <img src="img/03.png">
 
-If we now try to execute the previous GET command, we get the following answer as the data is now known to the root node.
+If we now try to execute the previous GET command, we get the following message as the data is now known to the root node.
 
 ```
 python3 cache_client.py 176.0.1.103 get test
@@ -155,7 +155,7 @@ data: "Howdy, how's it going?"
 
 #### DELETE
 
-The DELETE operation works in the similar fashion as the PUT operation. Once the data is deleted from the local storage, the update is propagated up the tree structure.
+The `DELETE` operation works in a similar fashion as the `PUT` operation. Once the data is deleted from the local storage, the update is propagated up the tree structure.
 
 ```
 python3 cache_client.py 176.0.1.106 delete test
@@ -168,7 +168,7 @@ status_code: 200
 data: "Data was successfully deleted from the cache"
 ```
 
-However, if we send the get request to node `176.0.1.103` again, we still receive the data as the information about the data being deleted does not traverse down the other tree branch.
+However, if we send the `GET` request to node `176.0.1.103` again, we still receive the data as the information about the data being deleted does not traverse down the other branch.
 
 <img src="img/05.png">
 
@@ -182,6 +182,6 @@ Another way to interact with the nodes is to use the interface that comes with e
 
 As you might have noticed, with each PUT or DELETE operation, the cache gets updated up towards the root node. Therefore, some nodes may still have old information in their local storage. The only node that has consistent data all the time is the root node itself. There are a few possible ways to deal with this issue, all of which have their proc & cons.
 
-### Approach #1
-
 Since the root node keeps the entire structure of the cache in memory, it could periodically broadcast changes to all the other nodes. Every record would be stored with a timestamp. If a node receives an update from the root node, it compares it to its local record and depending on its timestamp, it would either update it or discard it. The issue with this approach is that it puts additional stress on the root node, which already represents a bottle neck of the system. The mitigate the overhead embedded in the periodical broadcast, the root node could only notify those nodes who are known to have old data. However, this would require the root node to keep track of what data each and every node has in its local storage which would significantly increase the space complexity.
+
+### Approach #2
